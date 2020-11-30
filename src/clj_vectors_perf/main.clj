@@ -1,7 +1,14 @@
 (ns clj-vectors-perf.main
-  (:require [criterium.core :as crit]))
+  (:require [clojure.pprint :as pp]
+            [criterium.core :as crit]))
 
 (def crit-opts {:samples 30})
+
+(defn dump-platform-details []
+  (pp/pprint (into (sorted-map) (crit/runtime-details)))
+  (println)
+  (pp/pprint (into (sorted-map) (System/getProperties)))
+  (println))
 
 (defn sweep-params [f params-list]
   (let [params-vec (vec params-list)
@@ -21,9 +28,10 @@
     (crit/with-progress-reporting
       (crit/benchmark (= v1 v2) crit-opts))))
 
-(defn perf-=-vec-and-vec-ret-true []
+(defn perf-=-vec-and-vec-ret-true [opts]
+  (dump-platform-details)
   (sweep-params =-vec-and-vec-ret-true
-                [[1] [2] [4] [8] [16] [32] [64]
+                [[1] [2] [4] [8] [16] [32] [40] [48] [56] [64]
                  [128] [256] [512] [1024] [2048]
                  [4096] [8192] [16384] [32768] [65536]
                  [100000]]))
