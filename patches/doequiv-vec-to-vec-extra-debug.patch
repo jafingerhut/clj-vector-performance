@@ -1,0 +1,81 @@
+diff --git a/src/jvm/clojure/lang/APersistentVector.java b/src/jvm/clojure/lang/APersistentVector.java
+index c9f15cdd..de2db132 100644
+--- a/src/jvm/clojure/lang/APersistentVector.java
++++ b/src/jvm/clojure/lang/APersistentVector.java
+@@ -44,11 +44,12 @@ static boolean doEquals(IPersistentVector v, Object obj){
+         IPersistentVector ov = (IPersistentVector) obj;
+         if(ov.count() != v.count())
+             return false;
+-        for(int i = 0;i< v.count();i++)
+-            {
+-            if(!Util.equals(v.nth(i), ov.nth(i)))
++	for(Iterator i1 = ((List) v).iterator(), i2 = ((List) ov).iterator();
++	    i1.hasNext();)
++	    {
++            if(!Util.equals(i1.next(), i2.next()))
+                 return false;
+-            }
++	    }
+         return true;
+         }
+ 	else if(obj instanceof List)
+@@ -83,16 +84,24 @@ static boolean doEquals(IPersistentVector v, Object obj){
+ }
+ 
+ static boolean doEquiv(IPersistentVector v, Object obj){
++    if(v.count() > 9999) {
++	System.out.println("dbg APersistentVector.doEquiv count=" + v.count());
++    }
+     if(obj instanceof IPersistentVector)
+         {
+         IPersistentVector ov = (IPersistentVector) obj;
+         if(ov.count() != v.count())
+             return false;
+-        for(int i = 0;i< v.count();i++)
+-            {
+-            if(!Util.equiv(v.nth(i), ov.nth(i)))
++	if(v.count() > 9999) {
++	    System.out.println("dbg APersistentVector.doEquiv vec-to-vec count="
++			       + v.count());
++	}
++	for(Iterator i1 = ((List) v).iterator(), i2 = ((List) ov).iterator();
++	    i1.hasNext();)
++	    {
++            if(!Util.equiv(i1.next(), i2.next()))
+                 return false;
+-            }
++	    }
+         return true;
+     }
+ 	else if(obj instanceof List)
+@@ -143,9 +152,9 @@ public int hashCode(){
+ 	if(hash == 0)
+ 		{
+ 		hash = 1;
+-		for(int i = 0;i<count();i++)
++		for(Iterator i = ((List) this).iterator(); i.hasNext();)
+ 			{
+-			Object obj = nth(i);
++			Object obj = i.next();
+ 			hash = 31 * hash + (obj == null ? 0 : obj.hashCode());
+ 			}
+ 		this._hash = hash;
+@@ -156,15 +165,14 @@ public int hashCode(){
+ public int hasheq(){
+     int hash = this._hasheq;
+ 	if(hash == 0) {
+-        int n;
+         hash = 1;
+ 
+-        for(n=0;n<count();++n)
++	for(Iterator i = ((List) this).iterator(); i.hasNext();)
+             {
+-            hash = 31 * hash + Util.hasheq(nth(n));
++            hash = 31 * hash + Util.hasheq(i.next());
+             }
+ 
+-        this._hasheq = hash = Murmur3.mixCollHash(hash, n);
++        this._hasheq = hash = Murmur3.mixCollHash(hash, count());
+ 	}
+ 	return hash;
+ }

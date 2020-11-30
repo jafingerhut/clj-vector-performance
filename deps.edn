@@ -1,0 +1,12 @@
+{:paths ["src"]
+ :deps {org.clojure/clojure {:mvn/version "1.10.2-alpha4"}
+        criterium/criterium {:mvn/version "0.4.6"}}
+ :aliases
+ {
+  :clj {:jvm-opts ["-XX:-OmitStackTraceInFastThrow"]}
+  :modified-clj {:override-deps
+                 {org.clojure/clojure {:mvn/version "1.10.2-master-SNAPSHOT"}}}
+  :socket
+  {:jvm-opts
+   ["-Dclojure.server.repl={:port,50505,:accept,clojure.core.server/repl}"]}
+  }}
