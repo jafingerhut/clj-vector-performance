@@ -9,7 +9,7 @@
     (dotimes [i (count params-vec)]
       (println)
       (println "params:" (params-vec i))
-      (crit/report-result (results-vec i)))))
+      (crit/report-result (results-vec i) :verbose))))
 
 (defn =-vec-and-vec-ret-true [n]
   (let [v1 (vec (range n))
